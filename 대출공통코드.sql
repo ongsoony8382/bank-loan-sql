@@ -29,3 +29,28 @@ VALUES
 ('L03', '02','금융채 금리'),
 ('L03', '03','은행 기준금리')
 ;
+
+INSERT INTO TB_SY_CODE_MST (UPPER_CODE_ID, UPPER_CODE_NM)
+VALUES
+('L04', '대출유형코드')
+;
+
+INSERT INTO TB_SY_CODE_DTL (UPPER_CODE_ID, CODE_ID, CODE_NM)
+VALUES
+('L04', '01','신용대출'),
+('L04', '02','주택담보대출'),
+('L04', '03','자동차담보대출')
+;
+
+INSERT INTO TB_SY_CODE_MST (UPPER_CODE_ID, UPPER_CODE_NM)
+VALUES
+('L05', '상품상태코드')
+;
+
+INSERT INTO TB_SY_CODE_DTL (UPPER_CODE_ID, CODE_ID, CODE_NM)
+VALUES
+('L05', '01','판매중'),
+('L05', '02','판매중지'),
+('L05', '03','종료')
+;
+
