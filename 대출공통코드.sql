@@ -80,3 +80,13 @@ VALUES
 ('L07', '02', '확정'),
 ('L07', '03', '납부완료'),
 ('L07', '04', '연체');
+
+INSERT INTO TB_SY_CODE_MST (UPPER_CODE_ID, UPPER_CODE_NM)
+VALUES ('L08', '분배유형코드');
+
+INSERT INTO TB_SY_CODE_DTL (UPPER_CODE_ID, CODE_ID, CODE_NM, REMK)
+VALUES
+('L08', '01', '연체이자', '상환 우선순위 1'),
+('L08', '02', '연체원금', '상환 우선순위 2'),
+('L08', '03', '정상이자', '상환 우선순위 3'),
+('L08', '04', '정상원금', '상환 우선순위 4');
