@@ -99,3 +99,12 @@ VALUES
 ('L09', '01', '연체(미납)'),
 ('L09', '02', '연체(부분상환)'),
 ('L09', '03', '해소');
+
+INSERT INTO TB_SY_CODE_MST (UPPER_CODE_ID, UPPER_CODE_NM)
+VALUES ('L10', '금리변경사유코드');
+INSERT INTO TB_SY_CODE_DTL (UPPER_CODE_ID, CODE_ID, CODE_NM)
+VALUES
+('L10', '01', '기준금리변경'),
+('L10', '02', '가산금리조정'),
+('L10', '03', '우대금리적용'),
+('L10', '04', '우대금리해제');
