@@ -90,3 +90,12 @@ VALUES
 ('L08', '02', '연체원금', '상환 우선순위 2'),
 ('L08', '03', '정상이자', '상환 우선순위 3'),
 ('L08', '04', '정상원금', '상환 우선순위 4');
+
+INSERT INTO TB_SY_CODE_MST (UPPER_CODE_ID, UPPER_CODE_NM)
+VALUES ('L09', '연체상태코드');
+
+INSERT INTO TB_SY_CODE_DTL (UPPER_CODE_ID, CODE_ID, CODE_NM)
+VALUES
+('L09', '01', '연체(미납)'),
+('L09', '02', '연체(부분상환)'),
+('L09', '03', '해소');
