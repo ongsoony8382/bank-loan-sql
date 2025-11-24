@@ -108,3 +108,12 @@ VALUES
 ('L10', '02', '가산금리조정'),
 ('L10', '03', '우대금리적용'),
 ('L10', '04', '우대금리해제');
+
+INSERT INTO TB_SY_CODE_MST (UPPER_CODE_ID, UPPER_CODE_NM)
+VALUES ('L11', '대출신청상태코드');
+
+INSERT INTO TB_SY_CODE_DTL (UPPER_CODE_ID, CODE_ID, CODE_NM, REMK)
+VALUES
+('L11', 'L11-01', '심사중', '신청 등록 시 자동 설정'),
+('L11', 'L11-02', '승인', '대출 신청 승인'),
+('L11', 'L11-03', '거절', '대출 신청 거절');
