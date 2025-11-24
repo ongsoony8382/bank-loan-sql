@@ -17,6 +17,10 @@ BEGIN
 	DECLARE v_CRDT_GRD_CD VARCHAR(2); -- 신용 등급
 	DECLARE v_LOAN_TP_CD VARCHAR(10); -- 대출유형코드 
 	
+	DECLARE v_ACNT_NO VARCHAR(20); -- 계좌번호(임시)
+	DECLARE v_LOAN_ID BIGINT; -- TB_LOAN 생성 후 받을 값
+	 
+	
 	-- 1. 신청정보 조회 
 	SELECT CUST_ID, APLY_AMT, APLY_TRM_MM, LOAN_PD_ID
 	INTO v_CUST_ID, v_AMT, v_TERM, v_LOAN_PD_ID
@@ -62,13 +66,13 @@ BEGIN
 	-- 2-4. 최종 금리 계산
 	SET v_FINAL_RATE = v_BASE_RATE + v_ADD_RATE - v_PREF_RATE;
 	
-	SELECT 
-        'DEBUG_RATE' AS STEP,
-        v_BASE_RATE AS 기준금리,
-        v_ADD_RATE AS 가산금리,
-        v_PREF_RATE AS 우대금리,
-        v_FINAL_RATE AS 최종금리;
+	/** ---------------------------------------------------
+     * STEP 3: (임시) 계좌번호 생성
+     * 추후 자동생성 로직 확정 후 수정 예정
+     * --------------------------------------------------- */
 
+
+	
 
 	
 	
