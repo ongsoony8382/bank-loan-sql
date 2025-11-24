@@ -109,3 +109,21 @@ INSERT INTO TB_LOAN_PREF_INTR_RT_RULE
 (RULE_ID, PREF_COND_NM, PREF_INTR_RT)
 VALUES 
 (1, '자동이체', -0.200);
+
+INSERT INTO TB_CUST_DTL (
+    CUST_ID,
+    CRDT_GRD_CD,
+    CRDT_GRD_NM,
+    RGT_GUBUN,
+    RGT_ID,
+    RGT_DTM
+) VALUES (
+    'CU00000001',      -- 이 값은 LOAN_APLY에도 써야함
+    'B',             -- 테스트용 신용등급
+    '신용등급 B',     -- 선택
+    '3',
+    'SYS',
+    NOW()
+);
+
+
