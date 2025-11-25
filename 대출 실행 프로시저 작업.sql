@@ -19,6 +19,13 @@ BEGIN
 	
 	DECLARE v_ACNT_NO VARCHAR(20); -- 계좌번호(임시)
 	DECLARE v_LOAN_ID BIGINT; -- TB_LOAN 생성 후 받을 값
+   
+   DECLARE v_EXEC_DT DATETIME; -- 대출 실행일 
+   
+   SELECT STS_CHG_DT
+   INTO v_EXEC_DT
+   FROM tb_loan_aply
+   WHERE LOAN_APLY_ID = p_LOAN_APLY_ID; 
 	 
 	
 	-- 1. 신청정보 조회 
@@ -67,9 +74,25 @@ BEGIN
 	SET v_FINAL_RATE = v_BASE_RATE + v_ADD_RATE - v_PREF_RATE;
 	
 	/** ---------------------------------------------------
-     * STEP 3: (임시) 계좌번호 생성
+     * STEP 3: (임시) 계좌번호 생성 - 현재는 하드코딩 
      * 추후 자동생성 로직 확정 후 수정 예정
      * --------------------------------------------------- */
+     
+   SET v_ACNT_NO = '010-4848-78522-992';
+     
+   INSERT INTO TB_CUST_BACNT (
+     CUST_ID,        BACNT_NO,     BACNT_PSWD,   BANK_CD,     BACNT_NM,
+     DPSTR_NM,       BACNT_BLNC,   BACNT_ESTBL_YMD, BACNT_MTRY_YMD, BACNT_TY,
+     LIM_AMT,        CUST_GUBUN,   MNG_BRNCH_ID, BACNT_USE_YN, VR_BACNT_YN,
+     RMRK,           RGT_GUBUN,    RGT_ID,       RGT_DTM
+   )
+   VALUES (
+    v_CUST_ID,      v_ACNT_NO,    '1234',        '999',       '대출계좌',
+    v_CUST_ID,      0,            v_EXEC_DT,     DATE_ADD(v_EXEC_DT, INTERVAL v_TERM MONTH), '03',
+    0,              '1',          'BR05300057',  'Y',         'Y',
+    '대출 실행 시 자동 생성',  '3', 'SYS', v_EXEC_DT
+);
+
 
 
 	
