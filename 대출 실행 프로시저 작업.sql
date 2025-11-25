@@ -86,7 +86,7 @@ BEGIN
 	SET v_FINAL_RATE = v_BASE_RATE + v_ADD_RATE - v_PREF_RATE;
 
 	-- 임시 계좌 생성
-	SET v_ACNT_NO = '010-448-78522-992';
+	SET v_ACNT_NO = '010-44558-78522-992';
 
 	INSERT INTO TB_BACNT_MST (
 	 CUST_ID, BACNT_NO, BACNT_PSWD, BANK_CD, BACNT_NM,
@@ -95,7 +95,7 @@ BEGIN
 	 RMRK, RGT_GUBUN, RGT_ID, RGT_DTM
 	)
 	VALUES (
-	 v_CUST_ID, v_ACNT_NO, '1234', '999', '대출계좌',
+	 v_CUST_ID, v_ACNT_NO, '1234', '999', '대출계좌 테스트용',
 	 v_CUST_ID, 0, v_EXEC_DT, DATE_ADD(v_EXEC_DT, INTERVAL v_TERM MONTH), '03',
 	 0, '1', 'BR05300057', 'Y', 'Y',
 	 '대출 실행 시 자동 생성', '3', 'SYS', v_EXEC_DT
@@ -127,6 +127,17 @@ BEGIN
 	);
 
 	SET v_LOAN_ID = LAST_INSERT_ID();
+   
+   /** ---------------------------------------------------
+ * 5. 금리 이력 기록 (TB_LOAN_INTR_HIST)
+ * --------------------------------------------------- */
+   INSERT INTO tb_loan_intr_hist (
+   LOAN_ID, BASE_INTR_RT, ADD_INTR_RT, PREF_INTR_RT, APLY_INTR_RT,
+   INTR_CHG_RSN_CD, APLY_DT, RGT_GUBUN, RGT_ID, RGT_DTM
+)  VALUES (
+   v_LOAN_ID, v_BASE_RATE, v_ADD_RATE, v_PREF_RATE, v_FINAL_RATE,
+   '01', v_EXEC_DT,'3', 'SYS', v_EXEC_DT
+);
 
 END$$
 
