@@ -29,13 +29,13 @@ BEGIN
     -- 1-1. 신청 정보 조회 
     SELECT CUST_ID, APLY_TRM_MM, STS_CHG_DT, LOAN_PD_ID
     INTO   v_CUST_ID, v_TERM, v_EXEC_DT, v_PD_ID
-    FROM TB_LOAN_APLY
+    FROM tb_loan_aply
     WHERE LOAN_APLY_ID = p_LOAN_APLY_ID;
     
     -- 1-2. 상품명 조회 
     SELECT LOAN_PD_NM
     INTO v_PD_NM
-    FROM TB_LOAN_PD
+    FROM tb_loan_pd
     WHERE LOAN_PD_ID = v_PD_ID;
     
     -- 계좌 이름 생성 
@@ -44,7 +44,7 @@ BEGIN
     -- 1-3. 고객 구분 조회 (개인/법인 등)
     SELECT CUST_GUBUN
     INTO v_CUST_GUBUN
-    FROM TB_CUST_DTL
+    FROM tb_bacnt_mst
     WHERE CUST_ID = v_CUST_ID;
    
     
@@ -72,13 +72,13 @@ BEGIN
    -- 중복 체크 
    SELECT COUNT(*)
    INTO v_exists 
-   FROM TB_BACNT_MST
+   FROM tb_bacnt_mst
    WHERE BACNT_NO = v_temp_acnt;
    
    END WHILE account_loop;
    
    -- 계좌 테이블에 인서트 
-     INSERT INTO TB_BACNT_MST (
+     INSERT INTO tb_bacnt_mst (
       CUST_ID,
       BACNT_NO,
       BANK_CD,

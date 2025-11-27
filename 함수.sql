@@ -88,7 +88,8 @@ END$$
 
 DELIMITER ;
 
--- 대출 최초 실행시 인서트용 금리 계산 함수 
+-- 대출 최초 실행시 인서트용 금리 계산 함수
+DROP FUNCTION IF EXISTS FN_CALC_INTR; 
 DELIMITER $$
 
 CREATE FUNCTION FN_CALC_INTR(
@@ -112,19 +113,19 @@ BEGIN
     /* 1. 신청 정보 조회 (고객ID, 상품ID) */
     SELECT CUST_ID, LOAN_PD_ID
     INTO   v_CUST_ID, v_LOAN_PD_ID
-    FROM TB_LOAN_APLY
+    FROM tb_loan_aply
     WHERE LOAN_APLY_ID = p_LOAN_APLY_ID;
 
     /* 2. 기준금리 유형 조회 */
     SELECT BASE_RATE_TP_CD
     INTO   v_BASE_RATE_TP_CD
-    FROM TB_LOAN_PD
+    FROM tb_loan_pd
     WHERE LOAN_PD_ID = v_LOAN_PD_ID;
 
     /* 3. 기준 금리 유형에 따른 기준금리 최신값 */
     SELECT BASE_RATE
     INTO   v_BASE_RATE
-    FROM TB_LOAN_BASE_RATE_HIST
+    FROM tb_loan_base_rate_hist
     WHERE BASE_RATE_TP_CD = v_BASE_RATE_TP_CD
     ORDER BY APLY_DT DESC
     LIMIT 1;
@@ -132,19 +133,19 @@ BEGIN
     /* 4. 고객 신용등급 조회 */
     SELECT CRDT_GRD_CD
     INTO   v_CRDT_GRD_CD
-    FROM TB_CUST_DTL
+    FROM tb_cust_dtl
     WHERE CUST_ID = v_CUST_ID;
 
     /* 5. 상품 유형 조회 */
     SELECT LOAN_TP_CD
     INTO   v_LOAN_TP_CD
-    FROM TB_LOAN_PD
+    FROM tb_loan_pd
     WHERE LOAN_PD_ID = v_LOAN_PD_ID;
 
     /* 6. 신용 등급 및 대출 유형에 따른 가산금리 조회 */
     SELECT ADD_INTR_RT
     INTO   v_ADD_RATE
-    FROM TB_LOAN_ADD_INTR_RT_RULE
+    FROM tb_loan_add_intr_rt_rule
     WHERE LOAN_TP_CD = v_LOAN_TP_CD
       AND CRDT_GRD_CD = v_CRDT_GRD_CD;
 
@@ -213,5 +214,9 @@ DELIMITER ;
 CALL SP_TEST_RPMT();
 
 SELECT * FROM TMP_SCHD;*/
+
+SELECT *
+FROM db_odd_adv_4.tb_bacnt_dlng
+WHERE BACNT_NO = '010-44558-78522-992';
 
 

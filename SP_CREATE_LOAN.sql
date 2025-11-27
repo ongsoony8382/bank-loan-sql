@@ -40,12 +40,12 @@ BEGIN
         v_DSBR_ACCT_NO,
         v_PYMT_BANK_CD,
         v_PYMT_ACCT_NO
-   FROM TB_LOAN_APLY
+   FROM tb_loan_aply
    WHERE LOAN_APLY_ID = p_LOAN_APLY_ID;
    
    -- 대출 테이블 INSERT 
 
-    INSERT INTO TB_LOAN (
+    INSERT INTO tb_loan (
         LOAN_APLY_ID,
         LOAN_ACCT_NO,
         EXEC_AMT,
