@@ -84,7 +84,7 @@ BEGIN
         v_EXEC_DT
     );
 
-    SET p_LOAN_ID = LAST_INSERT_ID();
+    SET p_LOAN_ID = LAST_INSERT_ID(); -- 방금 TB_LOAN에 INSERT된 대출 PK 반환. 이후 금리 이력 INSERT, 상환 스케줄 생성 시 필요
 
 END$$
 
