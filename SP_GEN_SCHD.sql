@@ -19,7 +19,7 @@ BEGIN
    DECLARE v_TOT DECIMAL(15,0);  -- 해당 회차 총 상환액(원금+이자) 
    DECLARE v_REM DECIMAL(15,0);  -- 상환 후 잔여 원금
    
-   DECLARE v_due DATETIME;           -- 해당 회차 기간
+   DECLARE v_due DATE;           -- 해당 회차 기간
    DECLARE v_STS_CD VARCHAR(2); -- 회차 상태코드 설정 (1회차는 확정(02)으로, 나머지 회차는 예정(01)으로 들어가야함) 
    
    SET v_REM = p_EXEC_AMT;       -- 남은 원금 초기값 = 전체 대출금
