@@ -45,7 +45,8 @@ BEGIN
     SELECT CUST_GUBUN
     INTO v_CUST_GUBUN
     FROM tb_bacnt_mst
-    WHERE CUST_ID = v_CUST_ID;
+    WHERE CUST_ID = v_CUST_ID
+    LIMIT 1;
    
     
     
