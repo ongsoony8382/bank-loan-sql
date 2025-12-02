@@ -7,6 +7,32 @@ CREATE PROCEDURE SP_EXECUTE_LOAN(
 )
 
 BEGIN 
+
+   DECLARE v_current_sts_cd VARCHAR(10);
+   DECLARE v_error_message VARCHAR(255);
+   DECLARE EXIT HANDLER FOR SQLEXCEPTION
+   BEGIN 
+      ROLLBACK;
+      SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = '대출 실행 중 오류가 발생하여 모든 작업이 롤백되었습니다.';
+    END;
+    
+    START TRANSACTION;
+    
+   -- 0. 중복 실행 방지 
+   SELECT aply_sts_cd
+   INTO v_current_sts_cd
+   FROM tb_loan_aply
+   WHERE LOAN_APLY_ID = p_LOAN_APLY_ID
+   LIMIT 1;
+   
+   -- 실행 가능 상태 체크: '02' (승인) 일 때만 실행 허용 (01 심사중, 03 거절의 경우 대출 실행 막아야함.)
+   IF v_current_sts_cd IS NULL OR v_current_sts_cd != '02' THEN
+      SET v_error_message = CONCAT('대출 실행이 불가능한 상태입니다. 현재 상태:', v_current_sts_cd);
+      SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = v_error_message; -- 변수 전달
+    END IF;
+    
+   -- 상태가 '02'이므로 아래 로직 시작 
+      
    -- 1. 대출 신청 정보 조회 
    CALL SP_GET_LOAN_APLY(
         p_LOAN_APLY_ID,
@@ -67,6 +93,8 @@ BEGIN
     
    -- 7. 최종 반환
    SET o_LOAN_ID = @LOAN_ID;
+   
+   COMMIT;
 
 END$$
 
