@@ -1,0 +1,137 @@
+DROP PROCEDURE IF EXISTS SP_EXECUTE_LOAN;
+DELIMITER $$
+
+CREATE PROCEDURE SP_EXECUTE_LOAN(
+	IN p_LOAN_APLY_ID BIGINT,	
+	OUT o_LOAN_ID BIGINT -- 최종 생성된 대출 ID 반환	
+)
+
+BEGIN	
+
+	DECLARE v_current_sts_cd VARCHAR(10);
+	DECLARE v_error_message VARCHAR(255);
+	
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+	BEGIN	
+	 	ROLLBACK;
+	 	SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = '대출 실행 중 오류가 발생하여 모든 작업이 롤백되었습니다.';
+	END;
+	
+	START TRANSACTION;
+	
+	-- 0. 중복 실행 방지 및 상태 조회
+	SELECT aply_sts_cd INTO v_current_sts_cd
+	FROM tb_loan_aply
+	WHERE LOAN_APLY_ID = p_LOAN_APLY_ID
+	LIMIT 1;
+	
+	-- 실행 가능 상태 체크: '02' (승인) 일 때만 실행 허용
+	IF v_current_sts_cd IS NULL OR v_current_sts_cd != '02' THEN
+	 	SET v_error_message = CONCAT('대출 실행이 불가능한 상태입니다. 현재 상태:', v_current_sts_cd);
+	 	SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = v_error_message;
+	END IF;
+	
+	-- 상태가 '02'이므로 아래 로직 시작
+	 	
+	-- 1. 대출 신청 정보 조회
+	CALL SP_GET_LOAN_APLY(
+	 	p_LOAN_APLY_ID,
+	 	@CUST_ID,
+	 	@APLY_AMT,
+	 	@APLY_TERM,
+	 	@LOAN_PD_ID,
+	 	@EXEC_DT,
+	 	@INTR_TP_CD,
+	 	@RPMT_MTHD_CD
+	);
+	
+	-- 2. 최종 금리 계산
+	SET @JSON_INTR = FN_CALC_INTR(p_LOAN_APLY_ID);
+
+	SET @BASE_RATE = JSON_UNQUOTE(JSON_EXTRACT(@JSON_INTR, '$.BASE'));
+	SET @ADD_RATE  = JSON_UNQUOTE(JSON_EXTRACT(@JSON_INTR, '$.ADD'));
+	SET @PREF_RATE = JSON_UNQUOTE(JSON_EXTRACT(@JSON_INTR, '$.PREF'));
+	SET @FINAL_RATE= JSON_UNQUOTE(JSON_EXTRACT(@JSON_INTR, '$.FINAL'));
+	
+	-- 3. 대출 계좌 생성
+	CALL SP_CREATE_LOAN_ACCOUNT(
+	 	p_LOAN_APLY_ID,
+	 	@ACNT_NO
+	);	
+	
+	-- 4. 대출 본테이블 인서트
+	CALL SP_CREATE_LOAN(
+	 	p_LOAN_APLY_ID,	 	 -- 신청 ID
+	 	@ACNT_NO,	 	 	 -- 생성된 계좌
+	 	@FINAL_RATE,	 	 -- 최종 금리
+	 	@LOAN_ID	 	 	 -- OUT: 생성된 대출ID
+	);
+	
+	-- 5. 금리 이력 인서트
+	CALL SP_INSERT_INTR_HIST(
+	 	@LOAN_ID,
+	 	@BASE_RATE,
+	 	@ADD_RATE,
+	 	@PREF_RATE,
+	 	@FINAL_RATE,
+	 	@EXEC_DT
+	);	
+	
+	-- 6. 상환 스케줄 생성
+	CALL SP_GEN_SCHD(
+	 	@LOAN_ID,
+	 	@APLY_AMT,
+	 	@APLY_TERM,
+	 	@FINAL_RATE,
+	 	@EXEC_DT,
+	 	@RPMT_MTHD_CD
+	);	
+	
+	-- 7. 최종 반환
+	SET o_LOAN_ID = @LOAN_ID;
+	
+	COMMIT;
+
+END$$
+
+DELIMITER ;
+
+SELECT *
+FROM tb_loan_aply
+WHERE aply_id = 30;
+
+UPDATE tb_loan_rpmt paid_dt
+ SET paid_dt = '2025-01-01 18:00:00'
+WHERE rpmt_id = 587896;
+
+SELECT rpmt_id, loan_id, instl_no, paid_amt, paid_dt 
+FROM tb_loan_rpmt
+WHERE rpmt_id = 587896;
+
+SELECT * 
+FROM tb_loan_dist
+WHERE rpmt_id = 587896;
+
+SELECT *
+FROM tb_loan_rpmt_schd
+WHERE loan_id = 11961
+AND instl_no = 25;
+
+SELECT *
+FROM tb_loan_rpmt_schd
+WHERE loan_id = 24052
+AND instl_no = 25;
+
+UPDATE tb_loan_rpmt_schd
+ SET du_dt = '2025-01-01'
+WHERE loan_id = 24052
+AND instl_no = 25;
+
+SELECT *
+FROM tb_loan_dist;
+
+SELECT rpmt_id
+FROM tb_loan_dist
+WHERE dist_type_cd IN ('01','02','03','04')
+GROUP BY rpmt_id
+HAVING COUNT(DISTINCT dist_type_cd) = 4;
