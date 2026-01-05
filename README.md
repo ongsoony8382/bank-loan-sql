@@ -13,9 +13,8 @@
 
 - **대상 도메인**: 대출
 - **데이터 규모**: 총 약 **2,944,814건**
-  - 상환 스케줄 (`TB_LOAN_RPMT_SCHD`): 1,266,648건
-  - 상환 (`TB_LOAN_RPMT`): 555,166건
-  - 상환 분배 (`TB_LOAN_DIST`): 1,035,586건
+  <img width="900" height="466" alt="image" src="https://github.com/user-attachments/assets/b33e8ac4-bd23-4794-a941-9f8b0177497c" />
+
 
 ---
 
