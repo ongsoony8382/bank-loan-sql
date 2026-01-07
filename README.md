@@ -34,4 +34,5 @@ SQL 산출물은 역할별로 디렉터리를 분리해 관리
 - `/ddl` — 대출 도메인 테이블 및 인덱스 DDL  
 - `/procedure` — 대출 실행·상환·연체 관련 Stored Procedure  
 - `/dummy` — 대량 더미데이터 생성 및 적재 스크립트  
-- `/tuning` — 성능 튜닝 SQL 및 실행 계획(EXPLAIN)  
+- `/tuning` — 성능 튜닝 SQL 및 실행 계획(EXPLAIN)
+- `/analysis` - 업무 로직 검증을 위한 분석용 SQL
